@@ -1,0 +1,102 @@
+# vim:ft=ansible:
+# just install the important bits
+- name: refresh package database
+  apt: update_cache=yes cache_valid_time=3600
+
+- name: install essential packages
+  apt: 
+    name: "{{ essential_packages }}"
+
+- name: start fail2ban
+  service: 
+    name: fail2ban
+    state: started
+
+# config files
+- name: install screenrc
+  template:
+    src: "screenrc"
+    dest: "/root/.screenrc"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+# sshd hardening
+- name: harden sshd
+  template:
+    src: "sshd_config"
+    dest: "/etc/ssh/sshd_config"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+  notify: reload sshd
+
+- name: dotbash_aliases
+  template:
+    src: "dotbash_aliases"
+    dest: "/root/.bash_aliases"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+- name: gemdir
+  file:
+    path: "/root/gems"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+- name: Install Gems
+  gem:
+    name: "{{ item }}"
+    install_dir: "/root/gems"
+    user_install: false
+    state: "present"
+  loop:
+    - "bundler"
+    - "jekyll"
+
+- name: gemdir
+  file:
+    path: "/root/blog"
+    state: "directory"
+    mode: "0755"
+    owner: "root"
+    group: "root"
+
+- name: Gemfile
+  template:
+    src: "Gemfile"
+    dest: "/root/Gemfile"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+- name: "bundle install"
+  shell: "bundle install > bundle-install.log"
+  args:
+    chdir: "/root"
+    creates: "/root/bundle-install.log"
+
+- name: "jekyll new blog"
+  shell: "bundle exec jekyll new blog > bundle-new-blog.log"
+  args:
+    chdir: "/root"
+    creates: "bundle-new-blog.log"
+
+- name: blog/_config.yml
+  template:
+    src: "_config.yml"
+    dest: "/root/blog/_config.yml"
+    mode: "0644"
+    owner: "root"
+    group: "root"
+
+- name: blog/Gemfile
+  template:
+    src: "blog-Gemfile"
+    dest: "/root/blog/Gemfile"
+    mode: "0644"
+    owner: "root"
+    group: "root"

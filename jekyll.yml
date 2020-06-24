@@ -1,0 +1,5 @@
+# vim:ft=ansible:
+- hosts: hyde
+  user: root
+  roles:
+    - { role: blog-basic,     tags: [ blog, basic     ] }

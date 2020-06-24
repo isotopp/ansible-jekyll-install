@@ -1,0 +1,12 @@
+term screen
+defflow off
+hardstatus lastline
+defhstatus "\005c | \005H | \005w"
+
+setenv SSH_AUTH_SOCK "/tmp/ssh-agent-$USER-screen"
+
+screen -t "top"     0 top -d 2
+screen -t "apache2" 1 bash -c "tail -F /var/log/apache2/{access.log,error.log}"
+screen -t "ssh"     2 bash -c "tail -F /var/log/{auth,fail2ban}.log"
+screen -t "other"   3 bash -c "tail -F /var/log/{syslog,mysql/error.log}"
+screen -t "root"    4 bash

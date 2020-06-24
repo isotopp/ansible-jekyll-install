@@ -1,0 +1,18 @@
+essential_packages: 
+  - bind9-host
+  - build-essential
+  - fail2ban
+  - git
+  - joe
+  - lsof
+  - mutt
+  - rbenv
+  - ruby-bundler
+  - ruby-full
+  - screen
+  - strace
+  - sysstat
+  - traceroute
+  - unattended-upgrades
+  - watch
+  - zlib1g-dev
